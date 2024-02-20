@@ -48,9 +48,7 @@
       :open="openSetting"
       @close="onClose"
     >
-      <p>Some contents...</p>
-      <p>Some contents...</p>
-      <p>Some contents...</p>
+      <SideBarMenu></SideBarMenu>
     </a-drawer>
     <a-drawer
       title="User info"
@@ -69,7 +67,7 @@
 <script setup>
   import { ref, computed } from 'vue';
   import { MenuOutlined, CloseCircleTwoTone } from '@ant-design/icons-vue';
-
+  import SideBarMenu from './SideBarMenu.vue';
   // state
   const openSetting = ref(false);
   const openUserInfo = ref(false);
