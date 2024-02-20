@@ -1,7 +1,7 @@
 <template>
   <a-menu
-    v-model:openKeys="state.openKeys"
-    v-model:selectedKeys="state.selectedKeys"
+    v-model:openKeys="openKeys"
+    v-model:selectedKeys="selectedKeys"
     mode="inline"
     :inline-collapsed="state.collapsed"
     :items="items"
@@ -9,50 +9,26 @@
   ></a-menu>
 </template>
 <script setup>
+  import { useMenuStore } from '../../store/menu.js';
   import { useRouter } from 'vue-router';
-  import { reactive, h } from 'vue';
-  import {
-    UserOutlined,
-    SettingOutlined,
-    SolutionOutlined,
-  } from '@ant-design/icons-vue';
+  import { onMounted, reactive } from 'vue';
+  import { storeToRefs } from 'pinia';
 
   const router = useRouter();
-
+  let store = useMenuStore();
+  const { items, selectedKeys, openKeys } = storeToRefs(store);
+  const { setSelectedKeys } = store;
+  // state
   const state = reactive({
     collapsed: false,
-    selectedKeys: ['1'],
   });
-  const items = reactive([
-    {
-      key: '1',
-      icon: () => h(UserOutlined),
-      label: 'Users',
-      title: 'Users',
-      routerName: 'admin-users',
-    },
-    {
-      key: '2',
-      icon: () => h(SettingOutlined),
-      label: 'Settings',
-      title: 'Settings',
-      routerName: 'admin-settings',
-    },
-    {
-      key: '3',
-      icon: () => h(SolutionOutlined),
-      label: 'Roles',
-      title: 'Roles',
-      routerName: 'admin-roles',
-    },
-  ]);
 
   /**
    * select item event hanlder
    * @param {object} : item key
    */
   const onSelectItem = ({ key }) => {
-    let selectedItem = items.find((item) => item.key === key);
+    let selectedItem = items.value.find((item) => item.key == key);
     router.push({ name: selectedItem.routerName });
   };
 </script>
