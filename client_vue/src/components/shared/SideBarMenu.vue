@@ -11,7 +11,7 @@
 <script setup>
   import { useMenuStore } from '../../store/menu.js';
   import { useRouter } from 'vue-router';
-  import { onMounted, reactive } from 'vue';
+  import { reactive } from 'vue';
   import { storeToRefs } from 'pinia';
 
   const router = useRouter();
