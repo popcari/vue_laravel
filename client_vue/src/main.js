@@ -20,7 +20,8 @@ if (app) {
 	app.use(Menu);
 	app.use(Drawer);
 	app.use(router);
-	app.use(pinia)
+	app.use(pinia);
+	// app.use(axios)
 
 	app.mount('#app')
 }
