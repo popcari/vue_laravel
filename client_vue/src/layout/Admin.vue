@@ -1,8 +1,8 @@
 <template>
   <Header></Header>
   <div class="container-fluid mt-3">
-    <div class="row">
-      <div class="col-sm-2">
+    <div class="flex gap-4">
+      <div class="hidden lg:block lg:w-3/12">
         <a-list
           bordered
           class="w-full"
@@ -13,7 +13,7 @@
           <SideBarMenu></SideBarMenu>
         </a-list>
       </div>
-      <div class="col-sm-10">
+      <div class="w-full lg:w-9/12">
         <router-view></router-view>
       </div>
     </div>

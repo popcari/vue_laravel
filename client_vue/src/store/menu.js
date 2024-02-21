@@ -8,31 +8,32 @@ import {
 
 export const useMenuStore = defineStore("menu", {
 	state: () => ({
-		selectedKeys: ["1"],
+		selectedKeys: [],
 		openKeys: [],
 		items: [
 			{
-				key: '1',
+				key: 'admin-users',
 				icon: () => h(UserOutlined),
 				label: 'Users',
 				title: 'Users',
 				routerName: 'admin-users',
 			},
 			{
-				key: '2',
+				key: 'admin-settings',
 				icon: () => h(SettingOutlined),
 				label: 'Settings',
 				title: 'Settings',
 				routerName: 'admin-settings',
 			},
 			{
-				key: '3',
+				key: 'admin-roles',
 				icon: () => h(SolutionOutlined),
 				label: 'Roles',
 				title: 'Roles',
 				routerName: 'admin-roles',
 			},
 		],
+		count: 0,
 	}),
 	getters: {
 
@@ -45,5 +46,8 @@ export const useMenuStore = defineStore("menu", {
 		setOpenKeys(payload) {
 			this.openKeys = payload;
 		},
+		increment(payload) {
+			this.count += payload;
+		}
 	},
 })
