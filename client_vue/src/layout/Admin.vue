@@ -14,7 +14,9 @@
         </a-list>
       </div>
       <div class="w-full lg:w-9/12">
-        <router-view></router-view>
+        <Transition name="slide-fade">
+          <router-view></router-view>
+        </Transition>
       </div>
     </div>
   </div>
@@ -24,3 +26,18 @@
   import Header from '../components/shared/Header.vue';
   import SideBarMenu from '../components/shared/SideBarMenu.vue';
 </script>
+<style>
+  .slide-fade-enter-active {
+    transition: all 0.3s ease;
+  }
+
+  .slide-fade-leave-active {
+    transition: all 0.3s ease-in;
+  }
+
+  .slide-fade-enter-from,
+  .slide-fade-leave-to {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+</style>
