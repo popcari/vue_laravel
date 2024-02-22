@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
+import UserService from "../services/users.service.js"
 // import UserService from '../services/user.service'
 
 export const useUsersStore = defineStore("users", {
@@ -26,20 +27,39 @@ export const useUsersStore = defineStore("users", {
 				dataIndex: 'department',
 				key: 'department',
 			},
+			{
+				title: '',
+				dataIndex: 'action',
+				key: 'action',
+			},
 		]
 	}),
 	getters: {
 
 	},
 	actions: {
+		/**
+		 * Get all users
+		 */
 		async getAllUsers() {
 			try {
-				const response = await axios.get('http://localhost:8000/api/users');
-				console.log(response);
+				const response = await UserService.getAllUsers();
 				this.users = response.data;
 			} catch (error) {
 				console.error(error);
 			}
+		},
+
+		async deleteUser(payload) {
+			let deleteName = payload._value;
+			try {
+				const response = await UserService.deleteUserByName(deleteName);
+				return response;
+			} catch (error) {
+				console.log(error);
+			}
+
 		}
+
 	}
 })

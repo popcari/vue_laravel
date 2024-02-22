@@ -34,4 +34,20 @@ class UserController extends Controller
             ->get();
         return response()->json($users);
     }
+
+    /**
+     * delete user by name
+     */
+   public function deleteUser($name)
+    {
+        $user = User::where('name', $name)->first();
+        if ($user) {
+            $user->delete();
+
+            return response()->json(null, 204);
+        } else {
+            // Trả về response không tìm thấy người dùng (HTTP 404)
+            return response()->json(['error' => 'User not found'], 404);
+        }
+    }
 }

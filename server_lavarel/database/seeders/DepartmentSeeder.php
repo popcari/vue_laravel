@@ -15,7 +15,8 @@ class DepartmentSeeder extends Seeder
     public function run(): void
     {
         DB::table('department')->insert([
-            "name"=>"Quan tri",
+            ["name"=>"Admin"],
+            ["name" => "User"]
         ]);  
     }
 }
