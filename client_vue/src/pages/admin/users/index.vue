@@ -18,6 +18,7 @@
   <a-table
     :columns="header"
     :data-source="filteredUsers"
+    :scroll="{ x: 768 }"
   >
     <template #headerCell="{ column }">
       <template v-if="column.key === 'name'">

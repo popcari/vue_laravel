@@ -21,16 +21,22 @@ export const useUsersStore = defineStore("users", {
 				title: 'Status',
 				dataIndex: 'status',
 				key: 'status',
+				width: 100,
+
 			},
 			{
 				title: 'Department',
 				dataIndex: 'department',
 				key: 'department',
+				width: 150,
+
 			},
 			{
 				title: '',
 				dataIndex: 'action',
 				key: 'action',
+				fixed: 'right',
+				width: 100,
 			},
 		]
 	}),
