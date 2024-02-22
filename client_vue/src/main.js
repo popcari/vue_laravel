@@ -12,6 +12,9 @@ import 'bootstrap/dist/css/bootstrap-utilities.min.css'
 // ant design
 import { Button, List, Menu, Drawer } from 'ant-design-vue';
 import 'ant-design-vue/dist/reset.css';
+// elemnent plus
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
 
 let app = createApp(App)
 if (app) {
@@ -21,7 +24,7 @@ if (app) {
 	app.use(Drawer);
 	app.use(router);
 	app.use(pinia);
-	// app.use(axios)
+	app.use(ElementPlus)
 
 	app.mount('#app')
 }

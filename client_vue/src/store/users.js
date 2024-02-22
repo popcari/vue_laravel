@@ -1,7 +1,5 @@
-import { defineStore } from 'pinia'
-import axios from 'axios'
-import UserService from "../services/users.service.js"
-// import UserService from '../services/user.service'
+import { defineStore } from 'pinia';
+import UserService from '../services/users.service.js';
 
 export const useUsersStore = defineStore("users", {
 	state: () => ({
