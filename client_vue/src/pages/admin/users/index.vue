@@ -17,7 +17,7 @@
   </div>
   <a-table
     :columns="header"
-    :data-source="users"
+    :data-source="filteredUsers"
   >
     <template #headerCell="{ column }">
       <template v-if="column.key === 'name'">
@@ -41,24 +41,79 @@
           </a-tag>
         </span>
       </template>
+      <template v-else-if="column.key === 'action'">
+        <a-space>
+          <a-button
+            @click="onEditUser(record.name)"
+            class="flex items-center justify-center"
+            type="default"
+          >
+            <template #icon>
+              <EditOutlined two-tone-color="#1677ff" />
+            </template>
+          </a-button>
+          <a-button
+            @click="onDeleteIconClick(record.name)"
+            class="flex items-center justify-center"
+            type="primary"
+            danger
+          >
+            <template #icon>
+              <DeleteOutlined two-tone-color="#ffa345" />
+            </template>
+          </a-button>
+          <a-modal
+            title="Confirm"
+            v-model:open="open"
+          >
+            <template #footer>
+              <a-button
+                @click="handleCancel"
+                danger
+                >Cancel</a-button
+              >
+              <a-button
+                :loading="confirmLoading"
+                @click="handleOk"
+                >OK</a-button
+              >
+            </template>
+            <p>{{ `Are you sure to delete user ${record.name}` }}</p>
+          </a-modal>
+        </a-space>
+      </template>
     </template>
   </a-table>
 </template>
 
 <script setup>
-  import { ref, watch } from 'vue';
+  import { ref, computed } from 'vue';
   import { storeToRefs } from 'pinia';
-  import { UserAddOutlined } from '@ant-design/icons-vue';
+  import {
+    UserAddOutlined,
+    EditOutlined,
+    DeleteOutlined,
+  } from '@ant-design/icons-vue';
   import { useMenuStore } from '../../../store/menu';
   import { useUsersStore } from '../../../store/users';
 
   // store state
   let { setSelectedKeys } = useMenuStore();
   let { users, header } = storeToRefs(useUsersStore());
-  let { getAllUsers } = useUsersStore();
+  let { getAllUsers, deleteUser } = useUsersStore();
 
   // internal state
   let value = ref('');
+  let open = ref(false);
+  let confirmLoading = ref(false);
+  let deleteUserName = ref(null);
+
+  // computed
+  const filteredUsers = computed(() => {
+    return users.value.filter((user) => {
+      return user.name.toLowerCase().includes(value.value.toLowerCase());
+    });
+  });
 
   // created
   getAllUsers();
@@ -69,5 +124,31 @@
     console.log('Add');
   };
 
-  // watch
+  const onEditUser = (user) => {
+    console.log('EditUser', user);
+  };
+
+  const onDeleteIconClick = (user) => {
+    open.value = true;
+    deleteUserName.value = user;
+  };
+
+  const handleCancel = () => {
+    open.value = false;
+    deleteUserName.value = null;
+  };
+
+  const handleOk = async () => {
+    confirmLoading.value = true;
+    try {
+      let response = await deleteUser(deleteUserName);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      await getAllUsers();
+      confirmLoading.value = false;
+      open.value = false;
+      deleteUserName.value = null;
+    }
+  };
 </script>
