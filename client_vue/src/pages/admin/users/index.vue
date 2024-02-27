@@ -16,7 +16,7 @@
       draggable
       width="60%"
       height="80%"
-      @closed="resetForm(ruleFormRef)"
+      @closed="resetForm()"
     >
       <div class="flex gap-4 items-start lg:gap-10 flex-col lg:flex-row">
         <div class="w-full lg:w-[300px] flex flex-col items-center">
@@ -41,87 +41,82 @@
             @change="uploadImage"
           />
         </div>
-        <el-form
-          ref="ruleFormRef"
-          label-width="100px"
-          class="demo-ruleForm w-full"
-          status-icon
-          label-position="left"
+        <a-form
+          ref="formRef"
           :model="ruleForm"
           :rules="rules"
+          :label-col="labelCol"
+          :wrapper-col="wrapperCol"
+          labelAlign="left"
+          style="width: 100%"
         >
-          <el-form-item
+          <a-form-item
+            ref="username"
             label="Username"
-            prop="username"
+            name="username"
           >
-            <el-input v-model="ruleForm.username" />
-          </el-form-item>
-          <el-form-item
+            <a-input v-model:value="ruleForm.username" />
+          </a-form-item>
+          <a-form-item
+            ref="name"
             label="Name"
-            prop="name"
+            name="name"
           >
-            <el-input v-model="ruleForm.name" />
-          </el-form-item>
-          <el-form-item
-            label="Email"
-            prop="email"
-          >
-            <el-input v-model="ruleForm.email" />
-          </el-form-item>
-          <el-form-item
+            <a-input v-model:value="ruleForm.name" />
+          </a-form-item>
+          <a-form-item
+            ref="password"
             label="Password"
-            prop="password"
+            name="password"
           >
-            <el-input
-              type="password"
-              v-model="ruleForm.password"
-            />
-          </el-form-item>
-          <el-form-item
+            <a-input-password
+              validate-status="success"
+              v-model:value="ruleForm.password"
+            >
+              <template #prefix>
+                <LockOutlined class="site-form-item-icon" />
+              </template>
+            </a-input-password>
+          </a-form-item>
+          <a-form-item
+            ref="email"
+            label="Email"
+            name="email"
+          >
+            <a-input v-model:value="ruleForm.email" />
+          </a-form-item>
+          <a-form-item
             label="Department"
-            prop="department"
+            name="department_id"
           >
-            <el-select
-              v-model="ruleForm.department"
-              placeholder="Department"
-            >
-              <el-option
-                disabled
-                label="Admin"
-                value="1"
-              />
-              <el-option
-                label="User"
-                value="2"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item
+            <a-radio-group v-model:value="ruleForm.department_id">
+              <a-radio value="1">Admin</a-radio>
+              <a-radio value="2">User</a-radio>
+            </a-radio-group>
+          </a-form-item>
+          <a-form-item
             label="Status"
-            prop="status"
+            name="status_id"
           >
-            <el-radio-group v-model="ruleForm.status">
-              <el-radio
-                label="Active"
-                value="1"
-              />
-              <el-radio
-                label="Deactive"
-                disabled
-                value="2"
-              />
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item>
-            <el-button
-              type="primary"
-              @click="submitForm(ruleFormRef)"
+            <a-radio-group v-model:value="ruleForm.status_id">
+              <a-radio value="1">Active</a-radio>
+              <a-radio value="2">Deactive</a-radio>
+            </a-radio-group>
+          </a-form-item>
+
+          <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
+            <a-button
+              style="background-color: #1777ff; color: white"
+              @click="submitForm"
+              >Create</a-button
             >
-              Add
-            </el-button>
-            <el-button @click="resetForm(ruleFormRef)">Reset</el-button>
-          </el-form-item>
-        </el-form>
+            <a-button
+              style="margin-left: 10px"
+              @click="resetForm"
+              >Reset</a-button
+            >
+          </a-form-item>
+        </a-form>
       </div>
     </el-dialog>
     <a-input
@@ -204,7 +199,7 @@
 </template>
 
 <script setup>
-  import { ref, computed, reactive } from 'vue';
+  import { ref, computed, reactive, toRaw } from 'vue';
   import { storeToRefs } from 'pinia';
   import {
     UserAddOutlined,
@@ -227,18 +222,16 @@
   let deleteUserName = ref(null);
   let dialogFormisible = ref(false);
   let imageInput = ref(null);
-  const ruleFormRef = ref();
   const ruleForm = reactive({
     username: '',
     name: '',
     email: '',
     password: '',
-    department: '',
-    status: 'Active',
+    department_id: [],
+    status_id: [],
   });
   let imageIsSelected = ref(false);
   let image = ref('');
-
   const rules = reactive({
     username: [
       {
@@ -275,8 +268,8 @@
     department: [
       {
         required: true,
-        message: 'Please select deparment',
-        trigger: 'change',
+        message: 'Please select department',
+        trigger: 'blur',
       },
     ],
     status: [
@@ -287,6 +280,14 @@
       },
     ],
   });
+
+  const labelCol = {
+    span: 5,
+  };
+  const wrapperCol = {
+    span: 50,
+  };
+  const formRef = ref();
 
   // computed
   const filteredUsers = computed(() => {
@@ -332,40 +333,29 @@
     }
   };
 
-  const submitForm = async (formEl) => {
-    let newUserInfo;
-    if (!formEl) return;
-    await formEl.validate((valid, fields) => {
-      if (valid) {
-        console.log('submit!', valid);
-        newUserInfo = {
-          username: ruleForm.username,
-          name: ruleForm.name,
-          email: ruleForm.email,
-          password: ruleForm.password,
-          department: ruleForm.department,
-          status: ruleForm.status,
-        };
-        console.log('newUserInfo', newUserInfo);
-      } else {
-        console.log('error submit!', fields);
-      }
-    });
-
-    try {
-      let response = await createUser(newUserInfo);
-    } catch (e) {
-      console.log(`Failure creating user: ${e.message}`);
-    }
+  const submitForm = async () => {
+    formRef.value
+      .validate()
+      .then(async () => {
+        console.log('values', ruleForm, toRaw(ruleForm));
+        // call api create user after validation
+        try {
+          let response = await createUser(ruleForm);
+          console.log(response);
+        } catch (e) {
+          console.log(`Failure creating user: ${e.message}`);
+        }
+      })
+      .catch((error) => {
+        console.log('error', error);
+      });
   };
 
-  const resetForm = (formEl) => {
-    if (!formEl) return;
-    formEl.resetFields();
+  const resetForm = () => {
+    formRef.value.resetFields();
   };
 
   const uploadImage = (e) => {
-    // console.log(e.target.files);
     const file = e.target.files[0];
     console.log(image.value);
     if (file) {

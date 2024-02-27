@@ -30,14 +30,9 @@ class UserController extends Controller
     /**
      * create new user
      */
-    public function create(){
+    public function create(Request $request){
         // get all data from table users_status and department in DB
-        $users_status = \DB::table("users_status")->get();
-        $department = \DB::table("department")->get();
-        return response()->json([
-            'users_status' => $users_status,
-            'department' => $department
-        ]);
+        return $request;
     }
 
     /**
@@ -61,4 +56,8 @@ class UserController extends Controller
         }
     }
 
+    // public function store(Request $request)
+    // {
+    //     return $request;
+    // }
 }

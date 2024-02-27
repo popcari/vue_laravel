@@ -18,8 +18,9 @@ const UserService = {
    * @returns response object
    */
   createUser(params) {
-    return ApiService.post(`${baseUrl}/create`, params);
+    return ApiService.post(`${baseUrl}`, params);
   },
+
   // /**
   //  * Start detection server for a specific user
   //  * @param {Params} params

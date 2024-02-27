@@ -61,12 +61,12 @@ export const useUsersStore = defineStore('users', {
     },
 
     async createUser(payload) {
-      console.log(typeof payload);
-      console.log(payload);
       let userInfo = payload;
       if (!userInfo) return;
       try {
         const response = await UserService.createUser(userInfo);
+
+        return response;
       } catch (error) {
         console.log(`Create new user failed: ${error}`);
       }
