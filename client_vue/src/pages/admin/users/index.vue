@@ -5,7 +5,9 @@
       class="flex items-center"
       @click="handleAdd"
     >
-      <template #icon> <UserAddOutlined /> </template>
+      <template #icon>
+        <UserAddOutlined />
+      </template>
       Add
     </a-button>
     <el-dialog
@@ -18,15 +20,25 @@
     >
       <div class="flex gap-4 items-start lg:gap-10 flex-col lg:flex-row">
         <div class="w-full lg:w-[300px] flex flex-col items-center">
-          <div
-            class="w-[100px] h-[100px] flex flex-col items-center justify-center mb-4 bg-slate-200 lg:w-[150px] lg:h-[150px] lg:flex-row hover:bg-[#9df99a] hover:transition-all hover:border-[1px] hover:border-[#8ffa8b] duration-500"
-            @click="chooseFile"
-          >
-            <PlusOutlined class="scale-150 text-[#d5d5d5]" />
-          </div>
+          <Transition>
+            <div
+              v-if="!imageIsSelected"
+              class="w-[100px] h-[100px] flex flex-col items-center justify-center mb-4 bg-slate-200 lg:w-[150px] lg:h-[150px] lg:flex-row hover:bg-[#9df99a] hover:transition-all hover:border-[1px] hover:border-[#8ffa8b] duration-500"
+            >
+              <PlusOutlined class="scale-150 text-[#d5d5d5]" />
+            </div>
+            <div v-else>
+              <img
+                class="image mb-4"
+                :src="image"
+              />
+            </div>
+          </Transition>
+
           <input
             ref="imageInput"
             type="file"
+            @change="uploadImage"
           />
         </div>
         <el-form
@@ -84,7 +96,10 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="Status">
+          <el-form-item
+            label="Status"
+            prop="status"
+          >
             <el-radio-group v-model="ruleForm.status">
               <el-radio
                 label="Active"
@@ -110,7 +125,7 @@
       </div>
     </el-dialog>
     <a-input
-      v-model:value="value"
+      v-model:value="searchInput"
       placeholder="Search"
       size="large"
       class="w-4/12"
@@ -203,10 +218,10 @@
   // store state
   let { setSelectedKeys } = useMenuStore();
   let { users, header } = storeToRefs(useUsersStore());
-  let { getAllUsers, deleteUser } = useUsersStore();
+  let { getAllUsers, deleteUser, createUser } = useUsersStore();
 
   // internal state
-  let value = ref('');
+  let searchInput = ref('');
   let open = ref(false);
   let confirmLoading = ref(false);
   let deleteUserName = ref(null);
@@ -221,6 +236,8 @@
     department: '',
     status: 'Active',
   });
+  let imageIsSelected = ref(false);
+  let image = ref('');
 
   const rules = reactive({
     username: [
@@ -274,7 +291,7 @@
   // computed
   const filteredUsers = computed(() => {
     return users.value.filter((user) => {
-      return user.name.toLowerCase().includes(value.value.toLowerCase());
+      return user.name.includes(searchInput.value);
     });
   });
 
@@ -316,12 +333,12 @@
   };
 
   const submitForm = async (formEl) => {
+    let newUserInfo;
     if (!formEl) return;
-    console.log('submitForm', formEl);
     await formEl.validate((valid, fields) => {
       if (valid) {
         console.log('submit!', valid);
-        let newUserInfo = {
+        newUserInfo = {
           username: ruleForm.username,
           name: ruleForm.name,
           email: ruleForm.email,
@@ -334,6 +351,12 @@
         console.log('error submit!', fields);
       }
     });
+
+    try {
+      let response = await createUser(newUserInfo);
+    } catch (e) {
+      console.log(`Failure creating user: ${e.message}`);
+    }
   };
 
   const resetForm = (formEl) => {
@@ -341,8 +364,26 @@
     formEl.resetFields();
   };
 
-  const chooseFile = () => {
-    let file = this.$refs.imageInput;
-    console.log('file', file);
+  const uploadImage = (e) => {
+    // console.log(e.target.files);
+    const file = e.target.files[0];
+    console.log(image.value);
+    if (file) {
+      // Lưu đường dẫn của ảnh đã chọn
+      image.value = URL.createObjectURL(file);
+      imageIsSelected.value = true;
+    }
   };
 </script>
+
+<style scoped>
+  .v-enter-active,
+  .v-leave-active {
+    transition: opacity 0.5s ease;
+  }
+
+  .v-enter-from,
+  .v-leave-to {
+    opacity: 0;
+  }
+</style>

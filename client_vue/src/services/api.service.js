@@ -1,9 +1,9 @@
 import axiosBase from 'axios';
 
 const axios = axiosBase.create({
-	// This is development host
-	baseURL: "http://localhost:8000/api",
-	timeout: 150000,
+  // This is development host
+  baseURL: 'http://localhost:8000/api',
+  timeout: 150000,
 });
 
 // axios.interceptors.request.use(
@@ -44,29 +44,29 @@ const axios = axiosBase.create({
 // );
 
 const ApiService = {
-	async get(resource, params) {
-		return await axios.get(`/${resource}`, { params: params });
-	},
+  async get(resource, params) {
+    return await axios.get(`/${resource}`, { params: params });
+  },
 
-	async post(resource, body) {
-		return await axios.post(`/${resource}`, body);
-	},
+  async post(resource, body) {
+    return await axios.post(`/${resource}`, body);
+  },
 
-	async postFormData(resource, body) {
-		return await axios.post(`/${resource}`, body, {
-			headers: {
-				'Content-Type': 'multipart/form-data',
-			},
-		});
-	},
+  async postFormData(resource, body) {
+    return await axios.post(`/${resource}`, body, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
 
-	async put(resource, body) {
-		return await axios.put(`/${resource}`, body);
-	},
+  async put(resource, body) {
+    return await axios.put(`/${resource}`, body);
+  },
 
-	async delete(resource, params) {
-		return await axios.delete(`/${resource}`, { params: params });
-	},
+  async delete(resource, params) {
+    return await axios.delete(`/${resource}`, { params: params });
+  },
 };
 
 export default ApiService;

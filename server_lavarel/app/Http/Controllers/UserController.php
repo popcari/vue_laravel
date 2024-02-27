@@ -10,17 +10,9 @@ use Illuminate\Support\Facades\DB;
 class UserController extends Controller
 {
     /**
-     * get user by id
-     */
-    public function getUsetById($id)
-    {
-        return User::findOrFail($id);
-    }
-
-    /**
      * get all users
      */
-    public function getAllUsers()
+    public function index()
     {
         // return User::get();
         $users = User::
@@ -36,18 +28,37 @@ class UserController extends Controller
     }
 
     /**
+     * create new user
+     */
+    public function create(){
+        // get all data from table users_status and department in DB
+        $users_status = \DB::table("users_status")->get();
+        $department = \DB::table("department")->get();
+        return response()->json([
+            'users_status' => $users_status,
+            'department' => $department
+        ]);
+    }
+
+    /**
      * delete user by name
      */
-   public function deleteUser($name)
+    public function delete($name)
     {
         $user = User::where('name', $name)->first();
-        if ($user) {
-            $user->delete();
 
-            return response()->json(null, 204);
+        if ($user) {
+            try {
+                $user->delete();
+                return response()->json(null, 204);
+            } catch (\Exception $e) {
+                // Xử lý lỗi xóa và trả về response lỗi
+                return response()->json(['error' => 'Could not delete user'], 500);
+            }
         } else {
             // Trả về response không tìm thấy người dùng (HTTP 404)
             return response()->json(['error' => 'User not found'], 404);
         }
     }
+
 }

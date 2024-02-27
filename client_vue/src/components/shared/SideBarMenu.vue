@@ -25,10 +25,11 @@
 
   /**
    * select item event hanlder
-   * @param {object} : item key
+   * @param {object} item key
    */
   const onSelectItem = ({ key }) => {
     let selectedItem = items.value.find((item) => item.key == key);
+    if (!selectedItem) return;
     router.push({ name: selectedItem.routerName });
   };
 </script>
